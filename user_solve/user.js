@@ -35,12 +35,13 @@ exports.register = (req, res) => {
     }
 
     db.query(
-      "INSERT INTO user (username,password,status,time)VALUES (?,?,?,?)",
+      "INSERT INTO user (username,password,status,time,Email)VALUES (?,?,?,?,?)",
       [
         UserInfo.username,
         md5(UserInfo.password),
         0,
         new Date().toLocaleString(),
+        UserInfo.Email,
       ],
       (err, results) => {
         if (err) {
@@ -51,7 +52,7 @@ exports.register = (req, res) => {
         }
         console.log(results);
         if (results.affectedRows == 1) {
-          res.send({
+          return res.send({
             status: 200,
             msg: "注册成功！",
           });
@@ -64,6 +65,7 @@ exports.register = (req, res) => {
 //用户登录模块
 exports.login = (req, res) => {
   const UserInfo1 = req.body;
+
 
   // console.log(UserInfo1);
   const sql1 = `select * from user where username = '${UserInfo1.username}'   `;
@@ -84,7 +86,8 @@ exports.login = (req, res) => {
     }
     if (results.length > 0) {
       // console.log(2);
-      console.log(results);
+      // console.log(results);
+      // exports.results[0].id
       if (results[0].status == 1) {
         return res.send({
           status: 500,
@@ -92,22 +95,29 @@ exports.login = (req, res) => {
         });
       }
       // console.log(results[0].password === md5(UserInfo1.password));
+
       if (results[0].password === md5(UserInfo1.password)) {
         let token = jwt.sign(
-          { username: UserInfo1.username, id: results[0].id },
+          {
+            username: UserInfo1.username,
+            id: results[0].id,
+            ip: req.ip.replace(/[^\d '.']/g, ""),
+          },
           secretKey,
           {
             expiresIn: "24h",
           }
         );
 
+
         return res.send({
           status: 200,
           msg: "登录成功！",
           token: token,
+          id: results[0].id,
         });
       } else {
-        res.send({
+        return res.send({
           status: 403,
           msg: "密码错误！",
         });
@@ -131,6 +141,12 @@ exports.binlogin = (req, res) => {
           msg: err.message,
         });
       }
+      if (results.length == 0) {
+        return res.send({
+          status: 403,
+          msg: "用户不存在",
+        });
+      }
       if (results.length > 0) {
         console.log(results);
         db.query(
@@ -149,7 +165,7 @@ exports.binlogin = (req, res) => {
               return res.send({
                 status: 200,
                 msg: "更新成功",
-                user: req.body,
+                data: req.auth,
               });
             }
           }
@@ -206,3 +222,4 @@ exports.deletuser = (req, res) => {
     }
   );
 };
+
