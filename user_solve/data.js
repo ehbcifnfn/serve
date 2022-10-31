@@ -38,7 +38,7 @@ exports.RonDom = (req, res) => {
     }
     // console.log(resultes)
 
-   return res.send({
+    return res.send({
       msg: "获取验证码成功",
       status: 200,
       data: {
@@ -55,7 +55,7 @@ exports.RonDom = (req, res) => {
 //验证随机数
 exports.Proving = (req, res) => {
   const userproving = req.body;
-
+  console.log(userproving)
   if (JSON.stringify(userproving) == '{}') {
     return res.send({
       status: 401,
@@ -63,19 +63,20 @@ exports.Proving = (req, res) => {
 
     })
   }
-  console.log(userproving)
+  // console.log(userproving)
   db.query("SELECT * FROM new_table", (err, resultes) => {
     if (err) {
       console.log(err)
     }
     // console.log(resultes)
-    console.log((new Date().getTime() - resultes[userproving.index].time) / 1000)
+    console.log('时间'+(new Date().getTime() - resultes[userproving.index].time) / 1000)
     if (resultes[userproving.index].num == userproving.num && (new Date().getTime() - resultes[userproving.index].time) / 1000 <= 60 && resultes[userproving.index].idnum == userproving.idnum) {
       return res.send({
         status: 200,
         msg: "验证通过"
       })
     }
+
     if (resultes[userproving.index].num != userproving.num) {
       return res.send({
         status: 400,

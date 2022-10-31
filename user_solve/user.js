@@ -2,6 +2,8 @@ const db = require("../db/index.js");
 const jwt = require("jsonwebtoken");
 const { secretKey } = require("../config.js");
 const md5 = require("md5");
+const {ipnum }= require('../config')
+
 
 //注册模块
 exports.register = (req, res) => {
@@ -65,8 +67,6 @@ exports.register = (req, res) => {
 //用户登录模块
 exports.login = (req, res) => {
   const UserInfo1 = req.body;
-
-
   // console.log(UserInfo1);
   const sql1 = `select * from user where username = '${UserInfo1.username}'   `;
   db.query(sql1, (err, results, fields) => {
@@ -77,7 +77,7 @@ exports.login = (req, res) => {
         msg: err.message,
       });
     }
-    // console.log(results.length);
+    //  console.log(results.length);
     if (results.length == 0) {
       return res.send({
         status: 403,
@@ -96,7 +96,7 @@ exports.login = (req, res) => {
       }
       // console.log(results[0].password === md5(UserInfo1.password));
 
-      if (results[0].password === md5(UserInfo1.password)) {
+      if (results[0].password === md5(UserInfo1.password) && results[0].username == UserInfo1.username) {
         let token = jwt.sign(
           {
             username: UserInfo1.username,
@@ -177,6 +177,7 @@ exports.binlogin = (req, res) => {
 
 //删除用户
 exports.deletuser = (req, res) => {
+
   console.log(req.body);
   const UserInfo3 = req.body;
   if (!UserInfo3.username) {
