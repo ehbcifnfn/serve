@@ -7,6 +7,7 @@ const axios = require("axios");
 
 function limitip(req, res, next) {
     const ip = req.ip.replace(/[^\d '.']/g, "")
+
     // async function ajax() {
     //     const { data: results } = await axios({
     //         method: 'get',
@@ -29,11 +30,10 @@ function limitip(req, res, next) {
     //     console.log(t1)
     //    console.log( new Date('2022-10-28 19:00:00').getTime())
     //    console.log(new Date().getTime())
-
     // console.log(new Date().toLocaleString())
     db.query('SELECT count(*) as number FROM ip WHERE adress=?and time>? ', [ip, t1], (err, results) => {
         if (err) {
-            return res.send({
+            return res.json({
                 status: 400,
                 msg: err
             })
@@ -46,15 +46,25 @@ function limitip(req, res, next) {
         //         msg:'您已请求达到限制的一半',
         //         ipnum:results
         //     })
-        // }
+        //  }
+        db.query("SELECT status ,id FROM new_table where id=(SELECT MAX(id) FROM new_table)", (err, results2) => {
+            if (err) {
+                console.log(err)
+            }
+            console.log(results2)
+           
+        })
         if (results[0].number == ipnum / 2) {
-            res.send({
+           return res.send({
                 status: 4000,
                 msg: "请求次数超过一半,请验证",
                 ipnum: ipnum / 2
             })
 
+
         }
+
+        // if(results[0].number == ipnum )
         if (results[0].number > ipnum) {
 
         }
@@ -62,7 +72,7 @@ function limitip(req, res, next) {
             //插入ip相关信息
             db.query("INSERT INTO ip (adress,time,status) VALUES (?,?,?)", [ip, new Date().getTime(), 0], (err, results) => {
                 if (err) {
-                    return res.send({
+                    return res.json({
                         status: 400,
                         msg: err
                     })
@@ -77,7 +87,6 @@ function limitip(req, res, next) {
 
 
     )
-
 
 
 

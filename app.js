@@ -11,16 +11,23 @@ const ProvingToken = require("./user_solve/token")
 //登录，注册 接口
 const Login = require("./router/user.js");
 const data = require("./router/data.js");
+const random = require("./router/random.js")
+
 
 //代理
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
-const limitip = require("./user_solve/LimitIp")
+
 
 //设置允许跨域
 const cors = require("cors");
 app.use(cors());
-app.use(limitip)
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json())
+
+
+// app.use(limitip)
 app.use(
   "/api",
   createProxyMiddleware({
@@ -28,23 +35,21 @@ app.use(
     changeOrigin: true,
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json())
+
+
 
 //限制请求次数
 const limiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 15 minutes
-  max: ipnum, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  max: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: true, // Disable the `X-RateLimit-*` headers
   message: '请求过于频繁已加入黑名单',
 })
 
+
 app.use(limiter)
 app.use(express.static(path.join(__dirname, '/img')))
-
-
 
 // 解析token
 // app.use(
@@ -53,10 +58,11 @@ app.use(express.static(path.join(__dirname, '/img')))
 //   })
 // );
 
-
 //登录模块
 app.use(Login);
-
+//验证码
+app.use(random)
+//
 app.use(data);
 
 

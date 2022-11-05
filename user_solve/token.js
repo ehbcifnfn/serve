@@ -1,4 +1,6 @@
 //报错
+
+const expressJoi = require('express-joi-validator');
 function ProvingToken(err, req, res, next) {
 
     if (err.message == 'invalid token') {
@@ -15,13 +17,9 @@ function ProvingToken(err, req, res, next) {
             err: err
         });
     }
-    if (err.message == "No authorization token was found") {
-        return res.send({
-            status: '401',
-            msg: 'token不能为空',
-            err: err
-        })
-    }
+
+
+    // console.log(err)
     res.send("未知错误");
     next();
 }

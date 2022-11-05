@@ -67,11 +67,11 @@ exports.register = (req, res) => {
 //用户登录模块
 exports.login = (req, res) => {
   const UserInfo1 = req.body;
-  // console.log(UserInfo1);
+   console.log(UserInfo1);
   const sql1 = `select * from user where username = '${UserInfo1.username}'   `;
   db.query(sql1, (err, results, fields) => {
     if (err) {
-      console.log(1);
+      // console.log(1);
       return res.send({
         status: 400,
         msg: err.message,
@@ -223,4 +223,5 @@ exports.deletuser = (req, res) => {
     }
   );
 };
+
 
