@@ -12,11 +12,12 @@ const ProvingToken = require("./user_solve/token")
 const Login = require("./router/user.js");
 const data = require("./router/data.js");
 const random = require("./router/random.js")
-
+app.use(express.static(path.join(__dirname, "/img")));
 
 //代理
 const { createProxyMiddleware } = require("http-proxy-middleware");
-
+const bodyParser = require('body-parser');
+app.use(bodyParser.json({ limit: '5000000000kb' }));
 
 
 //设置允许跨域
@@ -25,7 +26,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json())
-
+app.use("/love", express.static("./love.html"))
+app.use("/file", express.static('./file'))
+app.use("/img", express.static("./img"))
 
 // app.use(limitip)
 app.use(
@@ -49,14 +52,15 @@ const limiter = rateLimit({
 
 
 app.use(limiter)
-app.use(express.static(path.join(__dirname, '/img')))
+
+
 
 // 解析token
-// app.use(
-//   jwt({ secret: secretKey, algorithms: ["HS256"] }).unless({
-//     path: ["/login", "/register", '/Ip'],
-//   })
-// );
+app.use(
+  jwt({ secret: secretKey, algorithms: ["HS256"] }).unless({
+    path: ["/login", "/register", '/Ip'],
+  })
+);
 
 //登录模块
 app.use(Login);
@@ -72,6 +76,6 @@ app.use(data);
 //错误中间件处理在最后
 app.use(ProvingToken)
 
-app.listen(80, (res, err) => {
+app.listen(90, (res, err) => {
   console.log("serve服务器开启");
 });

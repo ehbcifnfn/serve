@@ -3,13 +3,14 @@ const { num } = require('../config')
 
 // 生成随机数
 exports.RonDom = (req, res) => {
-
+  arr = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 1, 2, 3, 4, 5, 6, 7, 8, 9]
   str = "";
   str1 = ''
   for (let i = 0; i < num; i++) {
-    let rondomNumber = Math.floor(Math.random() * 10);
+    let rondomNumber = arr[Math.floor(Math.random() * 60)];
     str += rondomNumber;
   }
+  console.log(Math.floor(Math.random() * 61))
   time1 = new Date().getTime();
 
   for (let j = 0; j <= Math.floor(Math.random() * 10); j++) {
